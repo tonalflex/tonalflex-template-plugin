@@ -9,7 +9,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
   // Headline Label
   addAndMakeVisible(headlineLabel);
   headlineLabel.setText("Reverb Plugin", juce::dontSendNotification);
-  headlineLabel.setFont(juce::Font(20.0f, juce::Font::bold));
   headlineLabel.setJustificationType(juce::Justification::centred);
 
   // Room Size Slider

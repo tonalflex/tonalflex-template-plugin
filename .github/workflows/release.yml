@@ -1,0 +1,57 @@
+name: Build and Release ElkOS VST3 Plugin
+
+on:
+  push:
+    tags:
+      - "v*" # Triggers only when a tag like "v1.0.0" is pushed
+
+  workflow_dispatch: # Allow manual triggering from GitHub Actions UI
+
+jobs:
+  build-plugin:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Pull Prebuilt Docker Image
+        run: docker pull ghcr.io/tonalflex/elk-audio-os-builder:latest
+
+      - name: Run Plugin Build Inside Container
+        run: |
+          docker run --rm \
+            -v ${{ github.workspace }}/plugin:/home/yoctouser/plugin \
+            -v ${{ github.workspace }}/script:/home/yoctouser/script \
+            -v ${{ github.workspace }}/output:/home/yoctouser/output \
+            ghcr.io/tonalflex/elk-audio-os-builder:latest \
+            /home/yoctouser/script/build-elk-plugin.sh
+
+      - name: Check if ZIP File Exists
+        run: |
+          if [ ! -f output/elk-vst3-plugin.zip ]; then
+            echo "❌ ERROR: Plugin ZIP file not found!" >&2
+            exit 1
+          fi
+
+      - name: Create GitHub Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref_name }}
+          draft: false
+          prerelease: false
+          body: |
+            🎛️ New ElkOS VST3 Plugin Release!
+
+            - **Built using GitHub Actions**
+            - **Includes sushi-config.json**
+            - **Compatible with ElkOS**
+
+      - name: Upload ZIP to Release
+        uses: softprops/action-gh-release@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag_name: ${{ github.ref_name }}
+          files: output/elk-vst3-plugin.zip

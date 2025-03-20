@@ -1,12 +1,14 @@
 # TonalFlex Template Plugin
 
-A **template** for building new **VST3 plugins** for **TonalFlex** using **JUCE**.
+A **template** for building new **JUCE VST3 plugins** for **TonalFlex**.
 
 ---
 
 ## **📖 Introduction**
 
-The **TonalFlex Template Plugin** provides a starting point for creating **VST3 plugins** using **JUCE**. This template is designed to **simplify development** and ensure **cross-platform compatibility**, including **ElkOS** and **desktop environments**.
+The **TonalFlex Template Plugin** provides a starting point for creating **VST3 plugins** using **[JUCE](https://juce.com)**.
+
+This template is designed to **simplify development** and ensure **cross-platform compatibility**, including embedded **[ElkOS](https://www.elk.audio/)** and **desktop environments**.
 
 It includes:
 
@@ -65,7 +67,7 @@ The built release is available as a ZIP file under [Releases](https://github.com
 
 ## **🔨 Local Build Instructions**
 
-### **Build for ElkOS**
+### **Build for Embedded (ElkOS)**
 
 Build the plugin for ElkOS using the prebuilt docker image specified in `docker-compose.yml`.
 
@@ -81,13 +83,13 @@ _Note! You may need to add exectuable permission to the build script first time.
 chmod +x ./script/build-elk-plugin.sh
 ```
 
-### **Build for Desktop**
+### **Build for Desktop** (Linux/MacOS/Windows)
 
-If you want to build the desktop version in Release mode, use:
+If you want to build the plugin for desktop, use:
 
 ```sh
 # Option 1 - Debug Mode
-cmake -B build -S . -DBUILD_DESKTOP=ON
+cmake -B build -S . -DBUILD_DESKTOP=ON -DCMAKE_BUILD_TYPE=Debug
 
 # Option 2 - Release Mode
 cmake -B build -S . -DBUILD_DESKTOP=ON -DCMAKE_BUILD_TYPE=Release
@@ -98,7 +100,7 @@ cmake --build build
 
 _Note! Make sure you have selected a CMake Preset before first build, otherwise you may need to delete the build directory, choose preset and build again!_
 
-### **Run Standalone Build**
+### **Run Desktop Standalone Plugin**
 
 After building, run:
 
@@ -114,17 +116,46 @@ cd build/plugin/plugin_artefacts/Release/Standalone
 # MacOS
 open ./plugin.app
 
-# Windows
-
 # Linux
+chmod +x plugin
+./plugin
+
+# Windows (PowerShell)
+./plugin.exe
 ```
+
+### **Run Desktop VST3 Plugin**
+
+To load and run the **VST3 version** of the plugin, you will need a **plugin host** such as a DAW (**Logic Pro, Reaper, Studio One, Cubase, Ableton Live, etc.**) or a standalone **VST3 plugin host** like **JUCE Audio Plugin Host** (can be built from the [JUCE library](https://juce.com)).
+
+After building, the compiled **VST3 plugin** will be located at:
+
+```sh
+# Debug
+build/plugin/plugin_artefacts/Debug/VST3/plugin.vst3
+
+# Release
+build/plugin/plugin_artefacts/Release/VST3/plugin.vst3
+```
+
+#### **Install the Plugin**
+
+Copy the **VST3 plugin** to the appropriate directory for your OS so that your DAW can detect it:
+
+- **MacOS:** `~/Library/Audio/Plug-Ins/VST3/`
+- **Windows:** `C:\Program Files\Common Files\VST3\`
+- **Linux:** `~/.vst3/`
+
+After copying, **rescan your plugins** in your DAW's settings and load the plugin.
 
 ---
 
-### 🔓 Licensing & JUCE Attribution
+## 🔓 Licensing & JUCE Attribution
 
 This project is licensed under the **GNU AGPLv3**.
 
 It uses the **JUCE framework**, which is dual-licensed under AGPLv3 and the JUCE Proprietary License.
 
 For more information, see [JUCE Licensing](https://juce.com/juce-6-licence).
+
+---

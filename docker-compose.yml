@@ -1,0 +1,13 @@
+services:
+  elk-plugin-builder:
+    image: ghcr.io/tonalflex/elk-audio-os-builder:latest
+    container_name: elk-plugin-builder
+    platform: linux/amd64 # Apple Silicon Compatibility
+    volumes:
+      - ./plugin:/home/yoctouser/plugin
+      - ./script:/home/yoctouser/script
+      - ./bin:/home/yoctouser/bin
+    working_dir: /home/yoctouser/script
+    tty: true
+    stdin_open: true
+    command: "./build-elk-plugin.sh"

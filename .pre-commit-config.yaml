@@ -1,0 +1,6 @@
+repos:
+-   repo: https://github.com/pre-commit/mirrors-clang-format
+    rev: 'v19.1.5' # latest release we want to use
+    hooks:
+    -   id: clang-format
+        files: '.(c|h|hpp|cpp)$'

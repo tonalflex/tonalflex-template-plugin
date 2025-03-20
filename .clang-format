@@ -1,0 +1,7 @@
+---
+Language:        Cpp
+BasedOnStyle:  Chromium
+AccessModifierOffset: -2
+SortIncludes: Never
+ColumnLimit: 120 # Standard 80 for C++ is not suitable for JUCE C++ Framework
+...

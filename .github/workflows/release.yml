@@ -18,18 +18,13 @@ jobs:
       - name: Pull Prebuilt Docker Image
         run: docker pull ghcr.io/tonalflex/elk-audio-os-builder:latest
 
-      - name: Add Directory Permissions
-        run: |
-          sudo chmod -R 777 ${{ github.workspace }}/plugin
-          sudo chmod -R 777 ${{ github.workspace }}/script
-          sudo chmod -R 777 ${{ github.workspace }}/output
-
       - name: Run Plugin Build Inside Container
         run: |
           docker run --rm \
             -v ${{ github.workspace }}/plugin:/home/yoctouser/plugin \
             -v ${{ github.workspace }}/script:/home/yoctouser/script \
             -v ${{ github.workspace }}/output:/home/yoctouser/output \
+            --user root \
             ghcr.io/tonalflex/elk-audio-os-builder:latest \
             /home/yoctouser/script/build-elk-plugin.sh
 

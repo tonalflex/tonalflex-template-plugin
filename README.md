@@ -120,3 +120,11 @@ open ./plugin.app
 ```
 
 ---
+
+### 🔓 Licensing & JUCE Attribution
+
+This project is licensed under the **GNU AGPLv3**.
+
+It uses the **JUCE framework**, which is dual-licensed under AGPLv3 and the JUCE Proprietary License.
+
+For more information, see [JUCE Licensing](https://juce.com/juce-6-licence).

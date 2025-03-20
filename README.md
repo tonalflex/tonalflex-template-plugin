@@ -1,4 +1,4 @@
-# 🎛️ TonalFlex Template Plugin
+# TonalFlex Template Plugin
 
 A **template** for building new **VST3 plugins** for **TonalFlex** using **JUCE**.
 
@@ -38,7 +38,7 @@ Before you begin, ensure you have the following installed:
 
 ---
 
-## 🚀 Getting Started
+## **🎛️ Getting Started**
 
 When opening this template for the first time:
 
@@ -48,7 +48,22 @@ When opening this template for the first time:
 
 ---
 
-## 🔨 Build Instructions
+## **🚀 Deploying ElkOS VST3 Release**
+
+To build and release a **VST3 plugin for ElkOS**, push a version tag:
+
+```sh
+git tag v0.0.1
+git push origin v0.0.1
+```
+
+This triggers a CI workflow that automatically cross-compiles the JUCE plugin for ElkOS (aarch64).
+
+The built release is available as a ZIP file under [Releases](https://github.com/tonalflex/tonalflex-template-plugin/releases) on GitHub.
+
+---
+
+## **🔨 Local Build Instructions**
 
 ### **Build for ElkOS**
 
@@ -103,3 +118,5 @@ open ./plugin.app
 
 # Linux
 ```
+
+---

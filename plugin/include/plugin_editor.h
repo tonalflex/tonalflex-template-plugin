@@ -1,6 +1,7 @@
 #pragma once
 
 #include "plugin_processor.h"
+#include <juce_gui_extra/juce_gui_extra.h>  // needed for WebBrowserComponent
 
 namespace audio_plugin {
 class AudioPluginAudioProcessorEditor : public juce::AudioProcessorEditor {
@@ -12,6 +13,8 @@ public:
   void resized() override;
 
 private:
+  juce::WebBrowserComponent webView;
+
   juce::Label headlineLabel, roomSizeLabel, dampingLabel, wetLevelLabel, dryLevelLabel;
   juce::Slider roomSizeSlider, dampingSlider, wetLevelSlider, dryLevelSlider;
 

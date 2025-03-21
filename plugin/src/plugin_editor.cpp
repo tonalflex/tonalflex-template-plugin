@@ -50,6 +50,10 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
   dryLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
   dryLevelAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
       processorRef.getParameters(), "dryLevel", dryLevelSlider);
+
+  // Web View Setup
+  addAndMakeVisible(webView);
+  webView.goToURL("http://localhost:5173");
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {}
@@ -63,22 +67,45 @@ void AudioPluginAudioProcessorEditor::paint(juce::Graphics& g) {
 void AudioPluginAudioProcessorEditor::resized() {
   auto bounds = getLocalBounds();
 
-  // Layout headline
-  auto headlineBounds = bounds.removeFromTop(40);
+  auto leftPanel = bounds.removeFromLeft(bounds.getWidth() / 2);
+
+  auto headlineBounds = leftPanel.removeFromTop(40);
   headlineLabel.setBounds(headlineBounds);
 
-  // Layout sliders and labels
   auto sliderHeight = 50;
-  roomSizeLabel.setBounds(bounds.removeFromTop(20));
-  roomSizeSlider.setBounds(bounds.removeFromTop(sliderHeight));
+  roomSizeLabel.setBounds(leftPanel.removeFromTop(20));
+  roomSizeSlider.setBounds(leftPanel.removeFromTop(sliderHeight));
 
-  dampingLabel.setBounds(bounds.removeFromTop(20));
-  dampingSlider.setBounds(bounds.removeFromTop(sliderHeight));
+  dampingLabel.setBounds(leftPanel.removeFromTop(20));
+  dampingSlider.setBounds(leftPanel.removeFromTop(sliderHeight));
 
-  wetLevelLabel.setBounds(bounds.removeFromTop(20));
-  wetLevelSlider.setBounds(bounds.removeFromTop(sliderHeight));
+  wetLevelLabel.setBounds(leftPanel.removeFromTop(20));
+  wetLevelSlider.setBounds(leftPanel.removeFromTop(sliderHeight));
 
-  dryLevelLabel.setBounds(bounds.removeFromTop(20));
-  dryLevelSlider.setBounds(bounds.removeFromTop(sliderHeight));
+  dryLevelLabel.setBounds(leftPanel.removeFromTop(20));
+  dryLevelSlider.setBounds(leftPanel.removeFromTop(sliderHeight));
+
+  // Set web view bounds to the right half
+  webView.setBounds(bounds);
+
+  // auto bounds = getLocalBounds();
+
+  // // Layout headline
+  // auto headlineBounds = bounds.removeFromTop(40);
+  // headlineLabel.setBounds(headlineBounds);
+
+  // // Layout sliders and labels
+  // auto sliderHeight = 50;
+  // roomSizeLabel.setBounds(bounds.removeFromTop(20));
+  // roomSizeSlider.setBounds(bounds.removeFromTop(sliderHeight));
+
+  // dampingLabel.setBounds(bounds.removeFromTop(20));
+  // dampingSlider.setBounds(bounds.removeFromTop(sliderHeight));
+
+  // wetLevelLabel.setBounds(bounds.removeFromTop(20));
+  // wetLevelSlider.setBounds(bounds.removeFromTop(sliderHeight));
+
+  // dryLevelLabel.setBounds(bounds.removeFromTop(20));
+  // dryLevelSlider.setBounds(bounds.removeFromTop(sliderHeight));
 }
 }  // namespace audio_plugin

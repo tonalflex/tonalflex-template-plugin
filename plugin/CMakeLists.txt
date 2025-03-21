@@ -12,6 +12,12 @@ if (BUILD_DESKTOP)
     set(JUCE_WEB_BROWSER_VALUE 1)               # Webview UI for Desktop
     list(APPEND _plugin_formats "Standalone")   # Add Standalone format
     set(VST3_MANIFEST TRUE)                     # Create moduleinfo.json for VST3
+     # Find GTK and WebKitGTK for Linux desktop builds
+    if (UNIX AND NOT APPLE) # Linux-specific
+        find_package(PkgConfig REQUIRED)
+        pkg_check_modules(GTK3 REQUIRED gtk+-3.0)           # GTK 3
+        pkg_check_modules(WEBKITGTK REQUIRED webkit2gtk-4.1) # WebKitGTK
+    endif()
 else()
     set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
     find_package(JUCE CONFIG REQUIRED)           # Use ElkOS SDK provided JUCE
@@ -56,21 +62,23 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_audio_processors
         juce::juce_dsp
         juce::juce_gui_basics
+        juce::juce_gui_extra
 
         # Conditional libraries for Linux x86_64
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${ALSA_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${X11_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${CURL_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${FREETYPE_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${FONTCONFIG_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${GL_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${WEBKIT_LIBRARIES}>
+        # Linux-specific libraries (only for desktop builds)
+        $<$<AND:$<BOOL:${BUILD_DESKTOP}>,$<BOOL:${UNIX}>,$<NOT:$<BOOL:${APPLE}>>>:${GTK3_LIBRARIES}>
+        $<$<AND:$<BOOL:${BUILD_DESKTOP}>,$<BOOL:${UNIX}>,$<NOT:$<BOOL:${APPLE}>>>:${WEBKITGTK_LIBRARIES}>
 
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_warning_flags
         # juce::juce_recommended_lto_flags # Must be disabled for ElkOS build
 )
+
+# Include directories for GTK/WebKitGTK on Linux
+if (BUILD_DESKTOP AND UNIX AND NOT APPLE)
+    target_include_directories(${PROJECT_NAME} PRIVATE ${GTK3_INCLUDE_DIRS} ${WEBKITGTK_INCLUDE_DIRS})
+endif()
 
 # These definitions are recommended by JUCE.
 target_compile_definitions(${PROJECT_NAME}

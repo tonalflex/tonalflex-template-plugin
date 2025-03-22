@@ -19,16 +19,16 @@
 import { ref, onMounted } from "vue";
 import * as Juce from "juce-framework-frontend";
 
-// defineProps<{ identifier: string }>();
 const identifier = "roomSize";
-
 const paramValue = ref(0);
 let sliderState: any = null;
 
 onMounted(() => {
   sliderState = Juce.getSliderState(identifier);
+
   // Set the initial value
   paramValue.value = sliderState.getNormalisedValue();
+
   // Listen for JUCE backend updates
   sliderState.valueChangedEvent.addListener(() => {
     console.log("Value changed", sliderState.getNormalisedValue());

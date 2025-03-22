@@ -4,8 +4,6 @@
 namespace audio_plugin {
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p)
     : AudioProcessorEditor(&p), processorRef(p) {
-  setSize(400, 300);
-
   // Headline Label
   addAndMakeVisible(headlineLabel);
   headlineLabel.setText("Reverb Plugin", juce::dontSendNotification);
@@ -53,7 +51,9 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
 
   // Web View Setup
   addAndMakeVisible(webView);
+  // webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
   webView.goToURL("http://localhost:5173");
+  setSize(600, 600);
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {}
@@ -87,25 +87,58 @@ void AudioPluginAudioProcessorEditor::resized() {
 
   // Set web view bounds to the right half
   webView.setBounds(bounds);
-
-  // auto bounds = getLocalBounds();
-
-  // // Layout headline
-  // auto headlineBounds = bounds.removeFromTop(40);
-  // headlineLabel.setBounds(headlineBounds);
-
-  // // Layout sliders and labels
-  // auto sliderHeight = 50;
-  // roomSizeLabel.setBounds(bounds.removeFromTop(20));
-  // roomSizeSlider.setBounds(bounds.removeFromTop(sliderHeight));
-
-  // dampingLabel.setBounds(bounds.removeFromTop(20));
-  // dampingSlider.setBounds(bounds.removeFromTop(sliderHeight));
-
-  // wetLevelLabel.setBounds(bounds.removeFromTop(20));
-  // wetLevelSlider.setBounds(bounds.removeFromTop(sliderHeight));
-
-  // dryLevelLabel.setBounds(bounds.removeFromTop(20));
-  // dryLevelSlider.setBounds(bounds.removeFromTop(sliderHeight));
 }
+
+// Get the zipped webview ui
+std::optional<juce::WebBrowserComponent::Resource> AudioPluginAudioProcessorEditor::getResource(
+    const juce::String& url) {
+  const auto urlToRetrieve =
+      url == "/" ? juce::String{"index.html"} : url.fromFirstOccurrenceOf("/", false, false);
+
+  int zipSize = 0;
+  const void* zipData = BinaryData::getNamedResource("assets.zip", zipSize);
+  if (zipData == nullptr)
+    return std::nullopt;
+
+  juce::MemoryInputStream streamZip(zipData, static_cast<size_t>(zipSize), false);
+  juce::ZipFile archive(streamZip);
+
+  if (auto* entry = archive.getEntry(urlToRetrieve)) {
+    auto entryStream = rawToUniquePtr(archive.createStreamForEntry(*entry));
+    std::vector<std::byte> result((size_t)entryStream->getTotalLength());
+    entryStream->setPosition(0);
+    entryStream->read(result.data(), result.size());
+
+    auto mime =
+        getMimeForExtension(entry->filename.fromLastOccurrenceOf(".", false, false).toLowerCase());
+
+    return juce::WebBrowserComponent::Resource{std::move(result), std::move(mime)};
+  }
+
+  return std::nullopt;
+}
+
+const char* AudioPluginAudioProcessorEditor::getMimeForExtension(const juce::String& extension) {
+  static const std::unordered_map<juce::String, const char*> mimeMap = {
+      {{"htm"}, "text/html"},
+      {{"html"}, "text/html"},
+      {{"txt"}, "text/plain"},
+      {{"jpg"}, "image/jpeg"},
+      {{"jpeg"}, "image/jpeg"},
+      {{"svg"}, "image/svg+xml"},
+      {{"ico"}, "image/vnd.microsoft.icon"},
+      {{"json"}, "application/json"},
+      {{"png"}, "image/png"},
+      {{"css"}, "text/css"},
+      {{"map"}, "application/json"},
+      {{"js"}, "text/javascript"},
+      {{"woff2"}, "font/woff2"}};
+
+  if (const auto it = mimeMap.find(extension.toLowerCase()); it != mimeMap.end())
+    return it->second;
+
+  jassertfalse;
+  return "";
+}
+
 }  // namespace audio_plugin

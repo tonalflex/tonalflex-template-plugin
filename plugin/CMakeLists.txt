@@ -72,6 +72,16 @@ target_link_libraries(${PROJECT_NAME}
         # juce::juce_recommended_lto_flags # Must be disabled for ElkOS build
 )
 
+# Add WebAssets binary data
+juce_add_binary_data(WebAssets
+  SOURCES
+    web/assets.zip
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${WebAssets_BINARY_DIR}
+)
+
 # These definitions are recommended by JUCE.
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC

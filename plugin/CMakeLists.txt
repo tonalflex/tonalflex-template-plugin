@@ -57,15 +57,6 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_dsp
         juce::juce_gui_basics
 
-        # Conditional libraries for Linux x86_64
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${ALSA_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${X11_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${CURL_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${FREETYPE_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${FONTCONFIG_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${GL_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${WEBKIT_LIBRARIES}>
-
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_warning_flags

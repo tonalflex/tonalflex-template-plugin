@@ -47,6 +47,7 @@ private:
 
   juce::WebBrowserComponent webView{
       juce::WebBrowserComponent::Options{}
+          .withUserScript(R"(console.log("JUCE C++ Backend is running!");)")
           .withNativeIntegrationEnabled()
           .withBackend(juce::WebBrowserComponent::Options::Backend::webview2)
           .withWinWebView2Options(

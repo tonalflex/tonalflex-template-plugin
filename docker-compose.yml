@@ -9,3 +9,18 @@ services:
       - ./output:/home/yoctouser/output
     working_dir: /home/yoctouser/script
     command: "./build-elk-plugin.sh"
+
+  linux-plugin-builder:
+    build:
+      context: .
+      dockerfile: ./script/linux.Dockerfile
+    container_name: linux-plugin-builder
+    platform: linux/amd64
+    volumes:
+      - .:/home/dev
+    working_dir: /home/dev
+    # command: "./script/build-linux-plugin.sh"
+    environment:
+      - DEBIAN_FRONTEND=noninteractive
+    stdin_open: true
+    tty: true

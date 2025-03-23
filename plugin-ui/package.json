@@ -9,7 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "juce-framework-frontend": "../libs/juce/modules/juce_gui_extra/native/javascript",
+    "juce-framework-frontend": "file:../libs/juce/modules/juce_gui_extra/native/javascript",
     "vue": "^3.5.13"
   },
   "devDependencies": {

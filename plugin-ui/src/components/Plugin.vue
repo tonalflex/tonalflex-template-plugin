@@ -9,11 +9,10 @@
 
 <script setup lang="ts">
 import SliderControl from "@components/controls/SliderControl.vue";
-import { useSliderParameter } from "@composables/useSliderParameter";
+import { useParameter } from "@/composables/useParameter";
 
-// Plugin Parameters
-const roomSize = useSliderParameter("roomSize");
-const damping = useSliderParameter("damping");
-const wetLevel = useSliderParameter("wetLevel");
-const dryLevel = useSliderParameter("dryLevel");
+const roomSize = useParameter("roomSize", "slider");
+const damping = useParameter("damping", "slider");
+const wetLevel = useParameter("wetLevel", "slider");
+const dryLevel = useParameter("dryLevel", "slider");
 </script>

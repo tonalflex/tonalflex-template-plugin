@@ -7,6 +7,12 @@ export type ParameterMap = {
   comboBox: ComboBoxParameter;
 };
 
+export type ParameterValueType = {
+  slider: number;
+  toggle: boolean;
+  comboBox: number;
+};
+
 export interface IAudioBackend {
   getParameterState<T extends ParameterType>(name: string, type: T): ParameterMap[T];
 }

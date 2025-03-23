@@ -8,18 +8,12 @@
 </template>
 
 <script setup lang="ts">
-import { inject } from "vue";
-import type { IAudioBackend } from "../backend/IAudioBackend";
 import SliderControl from "./SliderControl.vue";
 import { useSliderParameter } from "../composables/useSliderParameter";
 
-// Inject audio backend specified in `index.ts` or `main.ts`
-const backend = inject<IAudioBackend>("audio-backend");
-if (!backend) throw new Error("No audio backend provided");
-
 // Plugin Parameters
-const roomSize = useSliderParameter("roomSize", backend);
-const damping = useSliderParameter("damping", backend);
-const wetLevel = useSliderParameter("wetLevel", backend);
-const dryLevel = useSliderParameter("dryLevel", backend);
+const roomSize = useSliderParameter("roomSize");
+const damping = useSliderParameter("damping");
+const wetLevel = useSliderParameter("wetLevel");
+const dryLevel = useSliderParameter("dryLevel");
 </script>

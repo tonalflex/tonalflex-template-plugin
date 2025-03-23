@@ -7,7 +7,7 @@ import type {
   SliderParameter,
   ToggleParameter,
   ComboBoxParameter,
-} from "./IAudioBackend";
+} from "@backend/IAudioBackend";
 
 export class JuceBackend implements IAudioBackend {
   getParameterState<T extends ParameterType>(

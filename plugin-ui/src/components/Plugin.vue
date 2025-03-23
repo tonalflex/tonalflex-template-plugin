@@ -8,8 +8,8 @@
 </template>
 
 <script setup lang="ts">
-import SliderControl from "./SliderControl.vue";
-import { useSliderParameter } from "../composables/useSliderParameter";
+import SliderControl from "@components/controls/SliderControl.vue";
+import { useSliderParameter } from "@composables/useSliderParameter";
 
 // Plugin Parameters
 const roomSize = useSliderParameter("roomSize");

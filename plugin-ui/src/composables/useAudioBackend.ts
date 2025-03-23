@@ -1,5 +1,5 @@
 import { inject } from "vue";
-import type { IAudioBackend } from "../backend/IAudioBackend";
+import type { IAudioBackend } from "@backend/IAudioBackend";
 
 let backend: IAudioBackend | undefined;
 

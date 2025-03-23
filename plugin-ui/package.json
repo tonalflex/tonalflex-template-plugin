@@ -9,14 +9,15 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "vue": "^3.5.13",
-    "juce-framework-frontend": "../libs/juce/modules/juce_gui_extra/native/javascript"
+    "juce-framework-frontend": "../libs/juce/modules/juce_gui_extra/native/javascript",
+    "vue": "^3.5.13"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
+    "vite-tsconfig-paths": "^5.1.4",
     "vue-tsc": "^2.2.4"
   }
 }

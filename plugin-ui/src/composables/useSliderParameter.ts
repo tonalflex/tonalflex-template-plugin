@@ -1,7 +1,7 @@
 // composables/useSliderParameter.ts
 import { ref, onMounted, watch } from "vue";
-import { useAudioBackend } from "./useAudioBackend";
-import type { SliderParameter } from "../backend/IAudioBackend";
+import { useAudioBackend } from "@composables/useAudioBackend";
+import type { SliderParameter } from "@backend/IAudioBackend";
 
 export function useSliderParameter(identifier: string) {
   const backend = useAudioBackend();

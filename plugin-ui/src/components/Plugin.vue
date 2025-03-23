@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import SliderControl from "@components/controls/SliderControl.vue";
-import { useParameter } from "@/composables/useParameter";
+import { useParameter } from "@composables/useParameter";
 
 const roomSize = useParameter("roomSize", "slider");
 const damping = useParameter("damping", "slider");

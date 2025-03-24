@@ -1,9 +1,11 @@
 {
   "name": "@tonalflex/template-plugin",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "type": "module",
   "private": false,
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "main": "dist/plugin-ui.umd.js",
   "module": "dist/plugin-ui.es.js",
   "types": "dist/index.d.ts",
@@ -22,6 +24,7 @@
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.7.2",
     "vite": "^6.2.0",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
     "vite-tsconfig-paths": "^5.1.4",
     "vue-tsc": "^2.2.4"
   }

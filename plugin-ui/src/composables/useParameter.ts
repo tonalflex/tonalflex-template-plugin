@@ -48,16 +48,21 @@ export function useParameter<T extends ParameterType>(
   const id = param.valueChangedEvent?.addListener(v => {
     value.value = v as ParameterValueType[T];
   });
+  
   if (id !== undefined) {
     onUnmounted(() => param.valueChangedEvent?.removeListener(id));
   }
 
   // Update UI => Backend
+  let debounce: ReturnType<typeof setTimeout> | null = null;
+
   watch(value, (val, oldVal) => {
-    if (val !== oldVal) {
+    if (val === oldVal) return;
+    if (debounce) clearTimeout(debounce);
+    debounce = setTimeout(() => {
       set(val);
-    }
-  });  
+    }, 10); // debounce time in ms
+  });
 
   return value;
 }

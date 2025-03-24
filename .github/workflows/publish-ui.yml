@@ -30,12 +30,19 @@ jobs:
           registry-url: "https://registry.npmjs.org/"
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          cd plugin-ui
+          npm ci
 
       - name: Build Library
-        run: npm run build
+        run: |
+          cd plugin-ui
+          npm run build
 
       - name: Publish to NPM
-        run: npm publish --access public
+        run: |
+          cd plugin-ui
+          npm publish --access public
+
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

@@ -1,5 +1,8 @@
 // Export main component
 export { default as Plugin } from './components/Plugin.vue';
 
-// Export TypeScript Audio Backend interface
+// Export Audio Backend interface
 export type * from './backend/IAudioBackend';
+
+// Export Mock Backend (For implementation testing)
+export { MockBackend } from './backend/MockBackend';

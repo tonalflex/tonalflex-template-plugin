@@ -8,4 +8,20 @@ export default defineConfig({
     vue(), 
     tsconfigPaths()
   ],
+  build: {
+    lib: {
+      entry: new URL('./src/index.ts', import.meta.url).pathname,
+      name: 'PluginUI',
+      fileName: (format) => `plugin-ui.${format}.js`
+    },
+    rollupOptions: {
+      external: ['vue', 'juce-framework-frontend'],
+      output: {
+        globals: {
+          vue: 'Vue',
+          'juce-framework-frontend': 'JuceFrameworkFrontend'
+        }
+      }
+    }
+  }
 })

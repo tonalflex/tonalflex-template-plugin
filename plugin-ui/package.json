@@ -1,6 +1,6 @@
 {
   "name": "@tonalflex/template-plugin",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "type": "module",
   "private": false,
   "files": ["dist"],
@@ -10,6 +10,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
+    "build:npm": "vue-tsc -b && vite build && npx vue-tsc --project tsconfig.build.json && rm -f dist/backend/JuceBackend.d.ts dist/main.d.ts dist/App.vue.d.ts",
     "preview": "vite preview"
   },
   "dependencies": {

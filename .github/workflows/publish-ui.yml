@@ -37,7 +37,7 @@ jobs:
       - name: Build Library
         run: |
           cd plugin-ui
-          npm run build
+          npm run build:npm
 
       - name: Publish to NPM
         run: |

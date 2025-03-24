@@ -53,7 +53,11 @@ export function useParameter<T extends ParameterType>(
   }
 
   // Update UI => Backend
-  watch(value, (val) => set(val));
+  watch(value, (val, oldVal) => {
+    if (val !== oldVal) {
+      set(val);
+    }
+  });  
 
   return value;
 }

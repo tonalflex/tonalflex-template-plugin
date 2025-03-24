@@ -1,55 +1,59 @@
 // composables/useParameter.ts
-import { ref, watch } from "vue";
+import { ref, watch, onUnmounted, type Ref } from "vue";
 import { useAudioBackend } from "@composables/useAudioBackend";
 import type {
   ParameterType,
+  ParameterMap,
   ParameterValueType,
-  SliderParameter,
-  ToggleParameter,
-  ComboBoxParameter,
 } from "@backend/IAudioBackend";
+
+type Parameter<T extends ParameterType> = ParameterMap[T];
 
 export function useParameter<T extends ParameterType>(
   identifier: string,
   type: T
-) {
+): Ref<ParameterValueType[T]> {
   const backend = useAudioBackend();
-  const state = backend.getParameterState(identifier, type);
+  const param = backend.getParameterState(identifier, type) as Parameter<T>;
 
-  const value = ref<ParameterValueType[T]>(undefined as unknown as ParameterValueType[T]);
+  let get: () => ParameterValueType[T];
+  let set: (value: ParameterValueType[T]) => void;
 
-  if (type === "slider") {
-    const slider = state as SliderParameter;
-    value.value = slider.getValue() as ParameterValueType[T];
-    slider.valueChangedEvent?.addListener(() => {
-      value.value = slider.getValue() as ParameterValueType[T];
-    });
-    watch(value, (newVal) => {
-      slider.setValue(newVal as number);
-    });
+  switch (type) {
+    case "slider": {
+      const p = param as ParameterMap["slider"];
+      get = () => p.getValue() as ParameterValueType[T];
+      set = (v) => p.setValue(v as ParameterValueType["slider"]);
+      break;
+    }
+    case "toggle": {
+      const p = param as ParameterMap["toggle"];
+      get = () => p.getValue() as ParameterValueType[T];
+      set = (v) => p.setValue(v as ParameterValueType["toggle"]);
+      break;
+    }
+    case "comboBox": {
+      const p = param as ParameterMap["comboBox"];
+      get = () => p.getChoiceIndex() as ParameterValueType[T];
+      set = (v) => p.setChoiceIndex(v as ParameterValueType["comboBox"]);
+      break;
+    }
+    default:
+      throw new Error(`Unsupported parameter type: ${type}`);
   }
 
-  else if (type === "toggle") {
-    const toggle = state as ToggleParameter;
-    value.value = toggle.getValue() as ParameterValueType[T];
-    toggle.valueChangedEvent?.addListener(() => {
-      value.value = toggle.getValue() as ParameterValueType[T];
-    });
-    watch(value, (newVal) => {
-      toggle.setValue(newVal as boolean);
-    });
+  const value = ref(get()) as Ref<ParameterValueType[T]>;
+
+  // Update Backend => UI
+  const id = param.valueChangedEvent?.addListener(v => {
+    value.value = v as ParameterValueType[T];
+  });
+  if (id !== undefined) {
+    onUnmounted(() => param.valueChangedEvent?.removeListener(id));
   }
 
-  else if (type === "comboBox") {
-    const combo = state as ComboBoxParameter;
-    value.value = combo.getChoiceIndex() as ParameterValueType[T];
-    combo.valueChangedEvent?.addListener(() => {
-      value.value = combo.getChoiceIndex() as ParameterValueType[T];
-    });
-    watch(value, (newVal) => {
-      combo.setChoiceIndex(newVal as number);
-    });
-  }
+  // Update UI => Backend
+  watch(value, (val) => set(val));
 
   return value;
 }

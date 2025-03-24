@@ -31,17 +31,17 @@ jobs:
 
       - name: Install Dependencies
         run: |
-          cd plugin-ui
+          cd ui
           npm ci
 
       - name: Build Library
         run: |
-          cd plugin-ui
+          cd ui
           npm run build:npm
 
       - name: Publish to NPM
         run: |
-          cd plugin-ui
+          cd ui
           npm publish --access public
 
         env:

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="507px" height="507px" viewBox="0 0 507 507" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>waveform-lines-sharp-regular</title>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="waveform-lines-sharp-regular" fill="#386E5C" fill-rule="nonzero">
+            <path d="M301.03125,0 L301.03125,23.765625 L301.03125,483.234375 L301.03125,507 L205.96875,507 L205.96875,483.234375 L205.96875,23.765625 L205.96875,0 L301.03125,0 Z M95.0625,95.0625 L95.0625,118.828125 L95.0625,388.171875 L95.0625,411.9375 L0,411.9375 L0,388.171875 L0,118.828125 L0,95.0625 L95.0625,95.0625 Z M507,126.75 L507,150.515625 L507,356.484375 L507,380.25 L411.9375,380.25 L411.9375,356.484375 L411.9375,150.515625 L411.9375,126.75 L507,126.75 Z" id="Shape"></path>
+        </g>
+    </g>
+</svg>

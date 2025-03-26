@@ -63,5 +63,12 @@ export class MockBackend implements IAudioBackend {
     console.log(`Returning mock state for ${name} (${type})`);
     return this.parameters[type];
   }
+
+  getPluginFunction(name: string): (...args: any[]) => Promise<any> {
+    return async (...args: any[]) => {
+      console.log(`Mock native function '${name}' called with`, args);
+      return Promise.resolve(`Mocked result of ${name}`);
+    };
+  }
 }
   

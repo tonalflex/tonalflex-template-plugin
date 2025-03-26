@@ -18,6 +18,9 @@ export class JuceBackend implements IAudioBackend {
     if (!config) throw new Error(`Unsupported parameter type: ${type}`);
     return config.adapt(config.get(name));
   }
+  getPluginFunction(name: string): (...args: any[]) => Promise<any> {
+    return Juce.getNativeFunction(name);
+  }
 }
 
 type JuceGetterMap = {

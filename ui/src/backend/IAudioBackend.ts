@@ -15,6 +15,7 @@ export type ParameterValueType = {
 
 export interface IAudioBackend {
   getParameterState<T extends ParameterType>(name: string, type: T): ParameterMap[T];
+  getPluginFunction(name: string): (...args: any[]) => Promise<any>;
 }
 
 export interface ValueChangeEvent<T> {

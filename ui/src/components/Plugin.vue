@@ -4,15 +4,31 @@
     <SliderControl label="Damping" v-model="damping" />
     <SliderControl label="Wet Level" v-model="wetLevel" />
     <SliderControl label="Dry Level" v-model="dryLevel" />
+
+    <button @click="handleClick" style="margin-top: 20px">Call Function</button>
+
+    <p v-if="loading" class="text-sm text-gray-500">Calling native function…</p>
+    <p v-if="result" class="text-sm text-green-600">{{ result }}</p>
+    <p v-if="error" class="text-sm text-red-500">{{ error }}</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import SliderControl from "@components/controls/SliderControl.vue";
 import { useParameter } from "@composables/useParameter";
+import { useFunction } from "@composables/useFunction";
 
+// Plugin Parameters
 const roomSize = useParameter("roomSize", "slider");
 const damping = useParameter("damping", "slider");
 const wetLevel = useParameter("wetLevel", "slider");
 const dryLevel = useParameter("dryLevel", "slider");
+
+// Plugin Native Functions
+const { result, loading, error, invoke } = useFunction("exampleNativeFunction");
+
+const handleClick = () => {
+  // Pass args to the native function
+  invoke(roomSize.value, damping.value, wetLevel.value, dryLevel.value);
+};
 </script>

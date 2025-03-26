@@ -53,17 +53,24 @@ private:
           .withWinWebView2Options(
               juce::WebBrowserComponent::Options::WinWebView2{}.withUserDataFolder(
                   juce::File::getSpecialLocation(juce::File::SpecialLocationType::tempDirectory)))
+          .withResourceProvider([this](const auto& url) { return getResource(url); },
+                                juce::URL{"http://localhost:5173/"}.getOrigin())
           .withOptionsFrom(roomSizeRelay)
           .withOptionsFrom(dampingRelay)
           .withOptionsFrom(wetLevelRelay)
           .withOptionsFrom(dryLevelRelay)
           .withOptionsFrom(controlParameterIndexReceiver)
-          .withResourceProvider([this](const auto& url) { return getResource(url); },
-                                juce::URL{"http://localhost:5173/"}.getOrigin())};
-
-  std::optional<juce::WebBrowserComponent::Resource> getResource(const juce::String& url);
-
-  const char* getMimeForExtension(const juce::String& extension);
+          .withNativeFunction(
+              "exampleNativeFunction",
+              [](const juce::Array<juce::var>& args,
+                 juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+                // Write debugger logs
+                juce::Logger::writeToLog("exampleNativeFunction called from WebView");
+                for (int i = 0; i < args.size(); ++i)
+                  juce::Logger::writeToLog("Arg " + juce::String(i) + ": " + args[i].toString());
+                // Result of the native function to WebView
+                completion("Hello from JUCE native function!");
+              })};
 
   juce::WebSliderParameterAttachment roomSizeWebAttachment{
       *processorRef.parameters.getParameter("roomSize"), roomSizeRelay, nullptr};
@@ -73,6 +80,9 @@ private:
       *processorRef.parameters.getParameter("wetLevel"), wetLevelRelay, nullptr};
   juce::WebSliderParameterAttachment dryLevelWebAttachment{
       *processorRef.parameters.getParameter("dryLevel"), dryLevelRelay, nullptr};
+
+  std::optional<juce::WebBrowserComponent::Resource> getResource(const juce::String& url);
+  const char* getMimeForExtension(const juce::String& extension);
 
   //==============================================================================
 

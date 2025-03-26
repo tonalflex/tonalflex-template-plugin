@@ -7,9 +7,9 @@
 
     <button @click="handleClick" style="margin-top: 20px">Call Function</button>
 
-    <p v-if="loading" class="text-sm text-gray-500">Calling native function…</p>
-    <p v-if="result" class="text-sm text-green-600">{{ result }}</p>
-    <p v-if="error" class="text-sm text-red-500">{{ error }}</p>
+    <p v-if="loading">Calling native function…</p>
+    <p v-if="result">{{ result }}</p>
+    <p v-if="error">{{ error }}</p>
   </div>
 </template>
 

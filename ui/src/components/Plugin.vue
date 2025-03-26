@@ -7,9 +7,9 @@
 
     <button @click="handleClick" style="margin-top: 20px">Call Function</button>
 
-    <p v-if="pluginFunction.loading">Calling plugin function…</p>
-    <p v-if="pluginFunction.result">{{ pluginFunction.result }}</p>
-    <p v-if="pluginFunction.error">{{ pluginFunction.error }}</p>
+    <p v-if="pluginFunction.loading.value">Calling plugin function…</p>
+    <p v-if="pluginFunction.result.value">{{ pluginFunction.result }}</p>
+    <p v-if="pluginFunction.error.value">{{ pluginFunction.error }}</p>
   </div>
 </template>
 

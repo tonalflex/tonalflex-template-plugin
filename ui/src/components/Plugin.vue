@@ -7,9 +7,9 @@
 
     <button @click="handleClick" style="margin-top: 20px">Call Function</button>
 
-    <p v-if="loading">Calling native function…</p>
-    <p v-if="result">{{ result }}</p>
-    <p v-if="error">{{ error }}</p>
+    <p v-if="pluginFunction.loading">Calling plugin function…</p>
+    <p v-if="pluginFunction.result">{{ pluginFunction.result }}</p>
+    <p v-if="pluginFunction.error">{{ pluginFunction.error }}</p>
   </div>
 </template>
 
@@ -25,10 +25,15 @@ const wetLevel = useParameter("wetLevel", "slider");
 const dryLevel = useParameter("dryLevel", "slider");
 
 // Plugin Native Functions
-const { result, loading, error, invoke } = useFunction("exampleNativeFunction");
+const pluginFunction = useFunction("exampleNativeFunction");
 
 const handleClick = () => {
-  // Pass args to the native function
-  invoke(roomSize.value, damping.value, wetLevel.value, dryLevel.value);
+  // Pass param vaules as args to the native function
+  pluginFunction.invoke(
+    roomSize.value,
+    damping.value,
+    wetLevel.value,
+    dryLevel.value
+  );
 };
 </script>

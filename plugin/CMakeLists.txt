@@ -1,20 +1,22 @@
 cmake_minimum_required(VERSION 3.22.1)
 
+# Required by JUCE
 set(PLUGIN_NAME "Tonalflex Plugin")
-
-project(plugin VERSION 0.0.1) # Required by JUCE
+project(plugin VERSION 0.0.1) 
 
 option(BUILD_DESKTOP "Also build Standalone" OFF)
 set(_plugin_formats "VST3") # Default plugin format
 
 # Build for Desktop or Embedded (ElkOS)
 if (BUILD_DESKTOP)
-    list(APPEND _plugin_formats "Standalone")
-    set(VST3_MANIFEST TRUE) # Create moduleinfo.json for VST3
+    set(JUCE_WEB_BROWSER_VALUE 1)               # Webview UI for Desktop
+    list(APPEND _plugin_formats "Standalone")   # Add Standalone format
+    set(VST3_MANIFEST TRUE)                     # Create moduleinfo.json for VST3
 else()
-    find_package(JUCE CONFIG REQUIRED) # Use ElkOS SDK provided JUCE
+    set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
+    find_package(JUCE CONFIG REQUIRED)           # Use ElkOS SDK provided JUCE
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF) # Disable LTO
-    set(VST3_MANIFEST FALSE) # Required for ElkOS cross-compilation
+    set(VST3_MANIFEST FALSE)                    # Required for ElkOS cross-compilation
 endif()
 
 juce_add_plugin(${PROJECT_NAME}
@@ -55,25 +57,26 @@ target_link_libraries(${PROJECT_NAME}
         juce::juce_dsp
         juce::juce_gui_basics
 
-        # Conditional libraries for Linux x86_64
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${ALSA_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${X11_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${CURL_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${FREETYPE_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${FONTCONFIG_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${GL_LIBRARIES}>
-        $<$<AND:$<BOOL:${UNIX}>,$<STREQUAL:${CMAKE_SYSTEM_PROCESSOR},x86_64>>:${WEBKIT_LIBRARIES}>
-
     PUBLIC
         juce::juce_recommended_config_flags
         juce::juce_recommended_warning_flags
         # juce::juce_recommended_lto_flags # Must be disabled for ElkOS build
 )
 
+# Add WebAssets binary data
+juce_add_binary_data(WebAssets
+  SOURCES
+    web/assets.zip
+)
+target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
+target_include_directories(${PROJECT_NAME}
+    PRIVATE ${WebAssets_BINARY_DIR}
+)
+
 # These definitions are recommended by JUCE.
 target_compile_definitions(${PROJECT_NAME}
     PUBLIC
-        JUCE_WEB_BROWSER=0
+        JUCE_WEB_BROWSER=${JUCE_WEB_BROWSER_VALUE}
         JUCE_USE_CURL=0
         JUCE_VST3_CAN_REPLACE_VST2=0
 )
@@ -85,4 +88,5 @@ else()
     target_compile_options(${PROJECT_NAME} PRIVATE -Wall -Wextra -Wpedantic)
 endif()
 
-source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/..) # Visual Studio Only
+# Visual Studio Only
+source_group(TREE ${CMAKE_CURRENT_SOURCE_DIR}/..) 

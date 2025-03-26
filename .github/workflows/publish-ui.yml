@@ -1,0 +1,48 @@
+name: Publish NPM Package UI
+
+on:
+  push:
+    tags:
+      - "ui-v*" # Triggers only when a tag like "ui-v1.0.0" is pushed
+
+  workflow_dispatch: # Allow manual triggering from GitHub Actions UI
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-publish:
+    name: Build & Publish to NPM
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: "https://registry.npmjs.org/"
+
+      - name: Install Dependencies
+        run: |
+          cd ui
+          npm ci
+
+      - name: Build Library
+        run: |
+          cd ui
+          npm run build:npm
+
+      - name: Publish to NPM
+        run: |
+          cd ui
+          npm publish --access public
+
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

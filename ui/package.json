@@ -1,0 +1,31 @@
+{
+  "name": "@tonalflex/template-plugin",
+  "version": "0.0.4",
+  "type": "module",
+  "private": false,
+  "files": [
+    "dist"
+  ],
+  "main": "dist/plugin-ui.umd.js",
+  "module": "dist/plugin-ui.es.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc -b && vite build",
+    "build:npm": "vue-tsc -b && vite build && npx vue-tsc --project tsconfig.build.json && rm -f dist/backend/JuceBackend.d.ts dist/main.d.ts dist/App.vue.d.ts",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "juce-framework-frontend": "file:../libs/juce/modules/juce_gui_extra/native/javascript",
+    "vue": "^3.5.13"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.2.1",
+    "@vue/tsconfig": "^0.7.0",
+    "typescript": "~5.7.2",
+    "vite": "^6.2.0",
+    "vite-plugin-css-injected-by-js": "^3.5.2",
+    "vite-tsconfig-paths": "^5.1.4",
+    "vue-tsc": "^2.2.4"
+  }
+}

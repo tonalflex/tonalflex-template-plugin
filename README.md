@@ -94,6 +94,9 @@ cmake -B build -S . -DBUILD_DESKTOP=ON -DCMAKE_BUILD_TYPE=Debug
 # Option 2 - Release Mode
 cmake -B build -S . -DBUILD_DESKTOP=ON -DCMAKE_BUILD_TYPE=Release
 
+# Note! For linux, you also need to specify the toolchain
+-DCMAKE_TOOLCHAIN_FILE=cmake/linux-toolchain.cmake \
+
 # Build Plugin
 cmake --build build
 ```

@@ -63,11 +63,13 @@ target_link_libraries(${PROJECT_NAME}
         # juce::juce_recommended_lto_flags # Must be disabled for ElkOS build
 )
 
-# Add WebAssets binary data
+# Add Webview files as binary data
+file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*")
+
 juce_add_binary_data(WebAssets
-  SOURCES
-    web/assets.zip
+  SOURCES ${WEB_ASSETS}
 )
+
 target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
 target_include_directories(${PROJECT_NAME}
     PRIVATE ${WebAssets_BINARY_DIR}

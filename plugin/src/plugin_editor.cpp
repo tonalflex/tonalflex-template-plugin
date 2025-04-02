@@ -52,7 +52,9 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
   // Web View Setup
   addAndMakeVisible(webView);
   // webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot());
-  webView.goToURL("http://localhost:5173");
+  webView.goToURL(juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
+  // webView.goToURL("http://localhost:5173");
+
   setSize(600, 600);
 }
 
@@ -89,33 +91,26 @@ void AudioPluginAudioProcessorEditor::resized() {
   webView.setBounds(bounds);
 }
 
-// Get the zipped webview ui
+// Webview resource provider
 std::optional<juce::WebBrowserComponent::Resource> AudioPluginAudioProcessorEditor::getResource(
     const juce::String& url) {
-  const auto urlToRetrieve =
-      url == "/" ? juce::String{"index.html"} : url.fromFirstOccurrenceOf("/", false, false);
+  juce::Logger::writeToLog("Requested URL: " + url);
 
-  int zipSize = 0;
-  const void* zipData = BinaryData::getNamedResource("assets.zip", zipSize);
-  if (zipData == nullptr)
+  auto filename = juce::URL(url).getFileName();
+  auto resourceName = filename.replaceCharacter('.', '_');
+
+  juce::Logger::writeToLog("Looking for resource: " + resourceName);
+
+  int size = 0;
+  auto* data = BinaryData::getNamedResource(resourceName.toRawUTF8(), size);
+  if (data == nullptr)
     return std::nullopt;
 
-  juce::MemoryInputStream streamZip(zipData, static_cast<size_t>(zipSize), false);
-  juce::ZipFile archive(streamZip);
+  std::vector<std::byte> content(reinterpret_cast<const std::byte*>(data),
+                                 reinterpret_cast<const std::byte*>(data + size));
+  auto mime = getMimeForExtension(filename.fromLastOccurrenceOf(".", false, false).toLowerCase());
 
-  if (auto* entry = archive.getEntry(urlToRetrieve)) {
-    auto entryStream = rawToUniquePtr(archive.createStreamForEntry(*entry));
-    std::vector<std::byte> result((size_t)entryStream->getTotalLength());
-    entryStream->setPosition(0);
-    entryStream->read(result.data(), result.size());
-
-    auto mime =
-        getMimeForExtension(entry->filename.fromLastOccurrenceOf(".", false, false).toLowerCase());
-
-    return juce::WebBrowserComponent::Resource{std::move(result), std::move(mime)};
-  }
-
-  return std::nullopt;
+  return juce::WebBrowserComponent::Resource{std::move(content), std::move(mime)};
 }
 
 const char* AudioPluginAudioProcessorEditor::getMimeForExtension(const juce::String& extension) {

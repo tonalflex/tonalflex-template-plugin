@@ -1,29 +1,43 @@
+// vite.config.ts
 import { defineConfig } from 'vite'
 import vue from '@vitejs/plugin-vue'
 import tsconfigPaths from 'vite-tsconfig-paths'
-import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js';
+import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 
-// https://vite.dev/config/
+const isLib = process.env.BUILD_TARGET === 'lib'
+
 export default defineConfig({
-  plugins: [
-    vue(), 
-    tsconfigPaths(),          // Allow @ import aliases
-    cssInjectedByJsPlugin(), // Inject CSS compiled with JS
-  ],
-  build: {
-    lib: {
-      entry: new URL('./src/index.ts', import.meta.url).pathname,
-      name: 'PluginUI',
-      fileName: (format) => `plugin-ui.${format}.js`
-    },
-    rollupOptions: {
-      external: ['vue', 'juce-framework-frontend'],
-      output: {
-        globals: {
-          vue: 'Vue',
-          'juce-framework-frontend': 'JuceFrameworkFrontend'
+  plugins: [vue(), tsconfigPaths(), cssInjectedByJsPlugin()],
+  build: isLib
+    // Build NPM library
+    ? {
+        lib: {
+          entry: new URL('./src/index.ts', import.meta.url).pathname,
+          name: 'PluginUI',
+          fileName: (format) => `plugin-ui.${format}.js`
+        },
+        rollupOptions: {
+          external: ['vue', 'juce-framework-frontend'],
+          output: {
+            globals: {
+              vue: 'Vue',
+              'juce-framework-frontend': 'JuceFrameworkFrontend'
+            }
+          }
         }
       }
-    }
-  }
+    // Build JUCE Webview static UI
+    : {
+        outDir: '../plugin/web',
+        emptyOutDir: true,
+        assetsDir: 'assets',
+        rollupOptions: {
+          input: './index.html',
+          output: {
+            format: 'iife',
+            entryFileNames: 'index.js'
+          }
+        }
+      },
+  base: './'
 })

@@ -11,8 +11,8 @@
   "types": "dist/index.d.ts",
   "scripts": {
     "dev": "vite",
-    "build": "vue-tsc -b && vite build",
-    "build:npm": "vue-tsc -b && vite build && npx vue-tsc --project tsconfig.build.json && rm -f dist/backend/JuceBackend.d.ts dist/main.d.ts dist/App.vue.d.ts",
+    "build": "BUILD_TARGET=juce vue-tsc -b && vite build --outDir ../plugin/webview",
+    "build:npm": "BUILD_TARGET=lib vue-tsc -b && vite build && npx vue-tsc --project tsconfig.build.json && rm -f dist/backend/JuceBackend.d.ts dist/main.d.ts dist/App.vue.d.ts",
     "preview": "vite preview"
   },
   "dependencies": {
@@ -20,6 +20,7 @@
     "vue": "^3.5.13"
   },
   "devDependencies": {
+    "@types/node": "^22.13.17",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
     "typescript": "~5.7.2",

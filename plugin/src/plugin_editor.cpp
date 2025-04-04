@@ -7,12 +7,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
   /**
    * Initialize WebView UI
    *
-   * - The Web UI is built using a web-framework (see the `/ui` directory in the project root).
+   * - The WebView UI is built using a web-framework (see the `/ui` directory in the project root).
    * - The compiled HTML/CSS/JS assets are embedded into the plugin via JUCE's BinaryData system.
    * - This Web UI is rendered inside the plugin editor using JUCE's WebBrowserComponent.
    * - Communication between the C++ backend and the WebView is handled via native integration.
    */
-
   webView = std::make_unique<juce::WebBrowserComponent>(
       juce::WebBrowserComponent::Options{}
           .withNativeIntegrationEnabled()  // (C++ <=> JS bridge, events, etc.)
@@ -67,7 +66,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
    * - Useful for testing parameter bindings or fallback scenarios.
    * - This section is not required in production and can be removed or disabled.
    */
-
   addAndMakeVisible(headlineLabel);
   headlineLabel.setText("Template Plugin", juce::dontSendNotification);
   headlineLabel.setJustificationType(juce::Justification::centred);

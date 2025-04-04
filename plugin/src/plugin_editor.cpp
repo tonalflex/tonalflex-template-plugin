@@ -71,10 +71,11 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
                 completion("Hello from JUCE native function!");
               }));
 
+  setSize(600, 600);
+
   // Wait to load the web view until the editor is fully constructed
   juce::MessageManager::callAsync([this]() {
     addAndMakeVisible(*webView);
-    setSize(600, 600);
     webView->goToURL(juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
   });
 }
@@ -119,8 +120,9 @@ std::optional<juce::WebBrowserComponent::Resource> AudioPluginAudioProcessorEdit
     const juce::String& url) {
   juce::Logger::writeToLog("Requested URL: " + url);
 
-  const auto filename = juce::URL(url).getFileName();
-  const auto resourceName = filename.replaceCharacter('.', '_');
+  // Extract filename and normalize to match BinaryData naming
+  juce::String filename = juce::URL(url).getFileName().trim();
+  juce::String resourceName = filename.removeCharacters("-").replaceCharacter('.', '_');
 
   int size = 0;
   const char* data = BinaryData::getNamedResource(resourceName.toRawUTF8(), size);
@@ -130,16 +132,15 @@ std::optional<juce::WebBrowserComponent::Resource> AudioPluginAudioProcessorEdit
     return std::nullopt;
   }
 
-  std::vector<std::byte> content;
-  content.resize(static_cast<size_t>(size));
+  std::vector<std::byte> content(static_cast<size_t>(size));
   std::memcpy(content.data(), data, static_cast<size_t>(size));
 
   juce::String ext = filename.fromLastOccurrenceOf(".", false, false).toLowerCase();
   juce::String mime = getMimeForExtension(ext);
   if (mime.isEmpty())
     mime = "application/octet-stream";
-  juce::Logger::writeToLog("Returning resource: " + resourceName + " (" + mime + ")");
 
+  juce::Logger::writeToLog("Returning resource: " + resourceName + " (" + mime + ")");
   return juce::WebBrowserComponent::Resource{std::move(content), mime};
 }
 

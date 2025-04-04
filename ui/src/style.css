@@ -15,7 +15,7 @@
 
 a {
   font-weight: 500;
-  color: #646cff;
+  color: #c5c5c5;
   text-decoration: inherit;
 }
 a:hover {
@@ -59,10 +59,13 @@ button:focus-visible {
 }
 
 #app {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
+  width: 100vw;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
   text-align: center;
+  background-color: #1a1a1a;
+  color: #c5c5c5;
 }
 
 @media (prefers-color-scheme: light) {

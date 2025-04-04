@@ -12,8 +12,8 @@ set(_plugin_formats "VST3") # Default plugin format
 if (BUILD_DESKTOP)
     set(JUCE_WEB_BROWSER_VALUE 1)               # Webview UI for Desktop
     list(APPEND _plugin_formats "Standalone")   # Add Standalone format
-    list(APPEND _plugin_formats "AU")           # Add AU (Apple) format
-    list(APPEND _plugin_formats "AAX")          # Add AAX (Avid) format
+    # list(APPEND _plugin_formats "AU")           # Add AU (Apple) format
+    # list(APPEND _plugin_formats "AAX")          # Add AAX (Avid) format
     set(VST3_MANIFEST TRUE)                     # Create moduleinfo.json for VST3
 else()
     set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
@@ -67,7 +67,7 @@ target_link_libraries(${PROJECT_NAME}
 )
 
 # Add Webview files as binary data
-file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*")
+file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*.*")
 
 juce_add_binary_data(WebAssets
   SOURCES ${WEB_ASSETS}

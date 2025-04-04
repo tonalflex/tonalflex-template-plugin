@@ -1,8 +1,9 @@
 cmake_minimum_required(VERSION 3.22.1)
 
-# Required by JUCE
-set(PLUGIN_NAME "Tonalflex Plugin")
-project(plugin VERSION 0.0.1) 
+# Required by JUCE (Change these to project specs)
+set(PLUGIN_NAME "Tonalflex Plugin")   # Name of the plugin (used in the UI)
+set(PLUGIN_CODE TFTP)                # Unique 4-letter code for the plugin
+project(plugin VERSION 0.0.1)        # Set version of the plugin
 
 option(BUILD_DESKTOP "Also build Standalone" OFF)
 set(_plugin_formats "VST3") # Default plugin format
@@ -11,6 +12,8 @@ set(_plugin_formats "VST3") # Default plugin format
 if (BUILD_DESKTOP)
     set(JUCE_WEB_BROWSER_VALUE 1)               # Webview UI for Desktop
     list(APPEND _plugin_formats "Standalone")   # Add Standalone format
+    list(APPEND _plugin_formats "AU")           # Add AU (Apple) format
+    list(APPEND _plugin_formats "AAX")          # Add AAX (Avid) format
     set(VST3_MANIFEST TRUE)                     # Create moduleinfo.json for VST3
 else()
     set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
@@ -25,8 +28,8 @@ juce_add_plugin(${PROJECT_NAME}
     IS_SYNTH FALSE
     NEEDS_MIDI_INPUT FALSE
     NEEDS_MIDI_OUTPUT FALSE
-    PLUGIN_MANUFACTURER_CODE MCMP
-    PLUGIN_CODE EXPL
+    PLUGIN_MANUFACTURER_CODE TFTF
+    PLUGIN_CODE ${PLUGIN_CODE}
     FORMATS ${_plugin_formats}
     PRODUCT_NAME ${PROJECT_NAME}
     VST3_AUTO_MANIFEST ${VST3_MANIFEST}

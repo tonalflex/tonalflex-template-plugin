@@ -6,7 +6,7 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
     : AudioProcessorEditor(&p), processorRef(p) {
   // Setup native JUCE UI
   addAndMakeVisible(headlineLabel);
-  headlineLabel.setText("Reverb Plugin", juce::dontSendNotification);
+  headlineLabel.setText("Template Plugin", juce::dontSendNotification);
   headlineLabel.setJustificationType(juce::Justification::centred);
 
   addAndMakeVisible(roomSizeLabel);
@@ -71,17 +71,17 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
                 completion("Hello from JUCE native function!");
               }));
 
-  addAndMakeVisible(*webView);
-  webView->goToURL(juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
-  // webView->goToURL("http://localhost:5173"); // Use this for ui-dev with hot
-  // reloading
-
-  setSize(600, 600);
+  // Wait to load the web view until the editor is fully constructed
+  juce::MessageManager::callAsync([this]() {
+    addAndMakeVisible(*webView);
+    setSize(600, 600);
+    webView->goToURL(juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
+  });
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
-  webView->stop();
   webView->setVisible(false);
+  webView->stop();
   juce::Logger::writeToLog("~AudioPluginAudioProcessorEditor destroyed");
 }
 

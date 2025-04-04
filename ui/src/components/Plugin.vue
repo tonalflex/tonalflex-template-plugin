@@ -1,5 +1,6 @@
 <template>
-  <div class="flex flex-col gap-6 items-center">
+  <div class="plugin-container">
+    <img src="@/assets/logo.png" alt="Logo" class="logo" />
     <SliderControl label="Room Size" v-model="roomSize" />
     <SliderControl label="Damping" v-model="damping" />
     <SliderControl label="Wet Level" v-model="wetLevel" />
@@ -37,3 +38,20 @@ const handleClick = () => {
   );
 };
 </script>
+
+<!-- Use style.css to change global styles such as font, colors, etc. -->
+<style scoped>
+.logo {
+  width: 60vw;
+  max-width: 400px;
+  height: auto;
+}
+.plugin-container {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+}
+</style>

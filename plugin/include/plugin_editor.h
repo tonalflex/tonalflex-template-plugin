@@ -6,8 +6,6 @@
 
 struct SinglePageBrowser : juce::WebBrowserComponent {
   using WebBrowserComponent::WebBrowserComponent;
-
-  // Prevent page loads from navigating away from our single page web app
   bool pageAboutToLoad(const juce::String& newURL) override {
     return newURL == juce::String("http://localhost:5173/") || newURL == getResourceProviderRoot();
   }
@@ -30,13 +28,17 @@ private:
   AudioPluginAudioProcessor& processorRef;
 
   //==============================================================================
-
+  // Native JUCE UI
+  //==============================================================================
   juce::Label headlineLabel, roomSizeLabel, dampingLabel, wetLevelLabel, dryLevelLabel;
   juce::Slider roomSizeSlider, dampingSlider, wetLevelSlider, dryLevelSlider;
   std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> roomSizeAttachment,
       dampingAttachment, wetLevelAttachment, dryLevelAttachment;
 
   //==============================================================================
+  // WebView UI
+  //==============================================================================
+  std::unique_ptr<juce::WebBrowserComponent> webView;
 
   juce::WebControlParameterIndexReceiver controlParameterIndexReceiver;
 
@@ -44,33 +46,6 @@ private:
   juce::WebSliderRelay dampingRelay{"damping"};
   juce::WebSliderRelay wetLevelRelay{"wetLevel"};
   juce::WebSliderRelay dryLevelRelay{"dryLevel"};
-
-  juce::WebBrowserComponent webView{
-      juce::WebBrowserComponent::Options{}
-          .withUserScript(R"(console.log("JUCE C++ Backend is running!");)")
-          .withNativeIntegrationEnabled()
-          .withBackend(juce::WebBrowserComponent::Options::Backend::webview2)
-          .withWinWebView2Options(
-              juce::WebBrowserComponent::Options::WinWebView2{}.withUserDataFolder(
-                  juce::File::getSpecialLocation(juce::File::SpecialLocationType::tempDirectory)))
-          .withResourceProvider([this](const auto& url) { return getResource(url); },
-                                juce::URL{"http://localhost:5173/"}.getOrigin())
-          .withOptionsFrom(roomSizeRelay)
-          .withOptionsFrom(dampingRelay)
-          .withOptionsFrom(wetLevelRelay)
-          .withOptionsFrom(dryLevelRelay)
-          .withOptionsFrom(controlParameterIndexReceiver)
-          .withNativeFunction(
-              "exampleNativeFunction",
-              [](const juce::Array<juce::var>& args,
-                 juce::WebBrowserComponent::NativeFunctionCompletion completion) {
-                // Write debugger logs
-                juce::Logger::writeToLog("exampleNativeFunction called from WebView");
-                for (int i = 0; i < args.size(); ++i)
-                  juce::Logger::writeToLog("Arg " + juce::String(i) + ": " + args[i].toString());
-                // Result of the native function to WebView
-                completion("Hello from JUCE native function!");
-              })};
 
   juce::WebSliderParameterAttachment roomSizeWebAttachment{
       *processorRef.parameters.getParameter("roomSize"), roomSizeRelay, nullptr};
@@ -82,7 +57,7 @@ private:
       *processorRef.parameters.getParameter("dryLevel"), dryLevelRelay, nullptr};
 
   std::optional<juce::WebBrowserComponent::Resource> getResource(const juce::String& url);
-  const char* getMimeForExtension(const juce::String& extension);
+  juce::String getMimeForExtension(const juce::String& extension);
 
   //==============================================================================
 

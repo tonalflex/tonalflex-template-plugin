@@ -1,4 +1,5 @@
 #include "plugin_processor.h"
+
 #include "plugin_editor.h"
 
 // Small tolerance for floating-point comparisons
@@ -14,21 +15,22 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          .withOutput("Output", juce::AudioChannelSet::stereo(), true)
 #endif
                          ),
-
-      parameters(*this,
-                 nullptr,
-                 "PARAMETERS",
-                 {std::make_unique<juce::AudioParameterFloat>("roomSize", "Room Size", 0.0f, 1.0f, 0.5f),
-                  std::make_unique<juce::AudioParameterFloat>("damping", "Damping", 0.0f, 1.0f, 0.3f),
-                  std::make_unique<juce::AudioParameterFloat>("wetLevel", "Wet Level", 0.0f, 1.0f, 0.5f),
-                  std::make_unique<juce::AudioParameterFloat>("dryLevel", "Dry Level", 0.0f, 1.0f, 0.5f)}) {
+      parameters(*this, nullptr, "PARAMETERS", [] {
+        return juce::AudioProcessorValueTreeState::ParameterLayout{
+            std::make_unique<juce::AudioParameterFloat>("roomSize", "Room Size", 0.0f, 1.0f, 0.5f),
+            std::make_unique<juce::AudioParameterFloat>("damping", "Damping", 0.0f, 1.0f, 0.3f),
+            std::make_unique<juce::AudioParameterFloat>("wetLevel", "Wet Level", 0.0f, 1.0f, 0.5f),
+            std::make_unique<juce::AudioParameterFloat>("dryLevel", "Dry Level", 0.0f, 1.0f, 0.8f)};
+      }()) {
 }
 
-AudioPluginAudioProcessor::~AudioPluginAudioProcessor() {}
+AudioPluginAudioProcessor::~AudioPluginAudioProcessor() {
+  releaseResources();
+  juce::Logger::writeToLog("[Processor] Destructor called");
+}
 
 const juce::String AudioPluginAudioProcessor::getName() const {
-  return "Reverb";
-  // return JucePlugin_Name;
+  return "Plugin";  // Replace with plugin name
 }
 
 bool AudioPluginAudioProcessor::acceptsMidi() const {
@@ -64,6 +66,7 @@ void AudioPluginAudioProcessor::changeProgramName(int index, const juce::String&
 void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerBlock) {
   juce::ignoreUnused(samplesPerBlock);
 
+  // Initialize parameters
   reverbParams.roomSize = *parameters.getRawParameterValue("roomSize");
   reverbParams.damping = *parameters.getRawParameterValue("damping");
   reverbParams.wetLevel = *parameters.getRawParameterValue("wetLevel");
@@ -76,7 +79,9 @@ void AudioPluginAudioProcessor::prepareToPlay(double sampleRate, int samplesPerB
   juce::ignoreUnused(sampleRate, samplesPerBlock);
 }
 
-void AudioPluginAudioProcessor::releaseResources() {}
+void AudioPluginAudioProcessor::releaseResources() {
+  juce::Logger::writeToLog("[Processor] releaseResources() called");
+}
 
 bool AudioPluginAudioProcessor::isBusesLayoutSupported(const BusesLayout& layouts) const {
   if (layouts.getMainOutputChannelSet() != juce::AudioChannelSet::mono() &&
@@ -91,7 +96,8 @@ bool AudioPluginAudioProcessor::isBusesLayoutSupported(const BusesLayout& layout
   return true;
 }
 
-void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, juce::MidiBuffer& midiMessages) {
+void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer,
+                                             juce::MidiBuffer& midiMessages) {
   juce::ignoreUnused(midiMessages);
   juce::ScopedNoDenormals noDenormals;
 
@@ -117,20 +123,19 @@ void AudioPluginAudioProcessor::processBlock(juce::AudioBuffer<float>& buffer, j
 
   // Auto-Detect Mono/Stereo input and process accordingly
   if (totalNumInputChannels == 1 && totalNumOutputChannels >= 2) {
-    // Mono input to stereo output
     auto* monoChannel = buffer.getWritePointer(0);
 
     // Duplicate the mono channel into the second channel for stereo processing
     auto* rightChannel = buffer.getWritePointer(1);
     std::copy(monoChannel, monoChannel + numSamples, rightChannel);
 
-    // Process stereo reverb
+    // Mono Input => Stereo Output
     reverb.processStereo(monoChannel, rightChannel, numSamples);
   } else if (totalNumInputChannels >= 2) {
-    // Stereo input: process directly
+    // Stereo Input => Stereo Output
     reverb.processStereo(buffer.getWritePointer(0), buffer.getWritePointer(1), numSamples);
   } else if (totalNumInputChannels == 1 && totalNumOutputChannels == 1) {
-    // Mono input and output: use mono reverb
+    // Mono Input => Mono Output
     reverb.processMono(buffer.getWritePointer(0), numSamples);
   }
 }

@@ -4,7 +4,70 @@
 namespace audio_plugin {
 AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudioProcessor& p)
     : AudioProcessorEditor(&p), processorRef(p) {
-  // Setup native JUCE UI
+  /**
+   * Initialize WebView UI
+   *
+   * - The Web UI is built using a web-framework (see the `/ui` directory in the project root).
+   * - The compiled HTML/CSS/JS assets are embedded into the plugin via JUCE's BinaryData system.
+   * - This Web UI is rendered inside the plugin editor using JUCE's WebBrowserComponent.
+   * - Communication between the C++ backend and the WebView is handled via native integration.
+   */
+
+  webView = std::make_unique<juce::WebBrowserComponent>(
+      juce::WebBrowserComponent::Options{}
+          .withNativeIntegrationEnabled()  // (C++ <=> JS bridge, events, etc.)
+
+          // Explicitly use WebView2 backend on Windows for modern HTML/CSS/JS support
+          // JUCE defaults to WebKit on macOS/Linux
+          .withBackend(juce::WebBrowserComponent::Options::Backend::webview2)
+          .withWinWebView2Options(
+              juce::WebBrowserComponent::Options::WinWebView2{}.withUserDataFolder(
+                  juce::File::getSpecialLocation(juce::File::tempDirectory)))
+
+          // Provide WebView UI resources from JUCE BinaryData (HTML/CSS/JS, etc.)
+          .withResourceProvider([this](const auto& url) { return getResource(url); },
+                                juce::URL{"http://localhost:5173/"}.getOrigin())
+
+          // Add support for control focus tracking in the WebView (parameter automation)
+          .withOptionsFrom(controlParameterIndexReceiver)
+
+          // Bind parameter relays for two-way communication (C++ <=> JS)
+          .withOptionsFrom(roomSizeRelay)
+          .withOptionsFrom(dampingRelay)
+          .withOptionsFrom(wetLevelRelay)
+          .withOptionsFrom(dryLevelRelay)
+
+          // Example: register a JUCE C++ function callable from JS for debugging/testing
+          .withNativeFunction(
+              "exampleNativeFunction",
+              [](const juce::Array<juce::var>& args,
+                 juce::WebBrowserComponent::NativeFunctionCompletion completion) {
+                juce::Logger::writeToLog("exampleNativeFunction called from WebView");
+                for (int i = 0; i < args.size(); ++i)
+                  juce::Logger::writeToLog("Arg " + juce::String(i) + ": " + args[i].toString());
+                completion("Hello from JUCE native function!");
+              })
+
+          // Inject debug message into browser console on load
+          .withUserScript(R"(console.log("JUCE C++ Backend is running!");)"));
+
+  // Set size of desktop plugin window (pixels)
+  setSize(600, 600);
+
+  // Ensure WebView is added after full construction (avoids timing issues)
+  juce::MessageManager::callAsync([this]() {
+    addAndMakeVisible(*webView);
+    webView->goToURL(juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
+  });
+
+  /**
+   * Initialize Native JUCE UI (for development and demo purposes)
+   *
+   * - This traditional JUCE-based GUI exists alongside the WebView UI.
+   * - Useful for testing parameter bindings or fallback scenarios.
+   * - This section is not required in production and can be removed or disabled.
+   */
+
   addAndMakeVisible(headlineLabel);
   headlineLabel.setText("Template Plugin", juce::dontSendNotification);
   headlineLabel.setJustificationType(juce::Justification::centred);
@@ -44,40 +107,6 @@ AudioPluginAudioProcessorEditor::AudioPluginAudioProcessorEditor(AudioPluginAudi
   dryLevelSlider.setTextBoxStyle(juce::Slider::TextBoxBelow, false, 50, 20);
   dryLevelAttachment = std::make_unique<juce::AudioProcessorValueTreeState::SliderAttachment>(
       processorRef.getParameters(), "dryLevel", dryLevelSlider);
-
-  // Setup Webview UI
-  webView = std::make_unique<juce::WebBrowserComponent>(
-      juce::WebBrowserComponent::Options{}
-          .withUserScript(R"(console.log("JUCE C++ Backend is running!");)")
-          .withNativeIntegrationEnabled()
-          .withBackend(juce::WebBrowserComponent::Options::Backend::webview2)
-          .withWinWebView2Options(
-              juce::WebBrowserComponent::Options::WinWebView2{}.withUserDataFolder(
-                  juce::File::getSpecialLocation(juce::File::tempDirectory)))
-          .withResourceProvider([this](const auto& url) { return getResource(url); },
-                                juce::URL{"http://localhost:5173/"}.getOrigin())
-          .withOptionsFrom(roomSizeRelay)
-          .withOptionsFrom(dampingRelay)
-          .withOptionsFrom(wetLevelRelay)
-          .withOptionsFrom(dryLevelRelay)
-          .withOptionsFrom(controlParameterIndexReceiver)
-          .withNativeFunction(
-              "exampleNativeFunction",
-              [](const juce::Array<juce::var>& args,
-                 juce::WebBrowserComponent::NativeFunctionCompletion completion) {
-                juce::Logger::writeToLog("exampleNativeFunction called from WebView");
-                for (int i = 0; i < args.size(); ++i)
-                  juce::Logger::writeToLog("Arg " + juce::String(i) + ": " + args[i].toString());
-                completion("Hello from JUCE native function!");
-              }));
-
-  setSize(600, 600);
-
-  // Wait to load the web view until the editor is fully constructed
-  juce::MessageManager::callAsync([this]() {
-    addAndMakeVisible(*webView);
-    webView->goToURL(juce::WebBrowserComponent::getResourceProviderRoot() + "index.html");
-  });
 }
 
 AudioPluginAudioProcessorEditor::~AudioPluginAudioProcessorEditor() {
@@ -116,6 +145,7 @@ void AudioPluginAudioProcessorEditor::resized() {
   webView->setBounds(bounds);  // Set web view bounds to the right half
 }
 
+// Get the WebView UI resources from BinaryData
 std::optional<juce::WebBrowserComponent::Resource> AudioPluginAudioProcessorEditor::getResource(
     const juce::String& url) {
   juce::Logger::writeToLog("Requested URL: " + url);
@@ -144,6 +174,7 @@ std::optional<juce::WebBrowserComponent::Resource> AudioPluginAudioProcessorEdit
   return juce::WebBrowserComponent::Resource{std::move(content), mime};
 }
 
+// Map file extensions to MIME types for serving embedded resources in the WebView UI
 juce::String AudioPluginAudioProcessorEditor::getMimeForExtension(const juce::String& extension) {
   static const std::unordered_map<juce::String, juce::String> mimeMap = {
       {"htm", "text/html"},

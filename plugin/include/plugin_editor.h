@@ -1,9 +1,10 @@
 #pragma once
 
 #include "plugin_processor.h"
-#include <juce_gui_extra/juce_gui_extra.h>  // needed for WebBrowserComponent
-#include "BinaryData.h"                     // needed for assets_zip
+#include <juce_gui_extra/juce_gui_extra.h>  // For WebBrowserComponent (used for WebView)
+#include "BinaryData.h"                     // Contains embedded Web UI assets (HTML/CSS/JS)
 
+// Restricts WebView loading to internal resources only
 struct SinglePageBrowser : juce::WebBrowserComponent {
   using WebBrowserComponent::WebBrowserComponent;
   bool pageAboutToLoad(const juce::String& newURL) override {
@@ -28,14 +29,6 @@ private:
   AudioPluginAudioProcessor& processorRef;
 
   //==============================================================================
-  // Native JUCE UI
-  //==============================================================================
-  juce::Label headlineLabel, roomSizeLabel, dampingLabel, wetLevelLabel, dryLevelLabel;
-  juce::Slider roomSizeSlider, dampingSlider, wetLevelSlider, dryLevelSlider;
-  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> roomSizeAttachment,
-      dampingAttachment, wetLevelAttachment, dryLevelAttachment;
-
-  //==============================================================================
   // WebView UI
   //==============================================================================
   std::unique_ptr<juce::WebBrowserComponent> webView;
@@ -58,6 +51,14 @@ private:
 
   std::optional<juce::WebBrowserComponent::Resource> getResource(const juce::String& url);
   juce::String getMimeForExtension(const juce::String& extension);
+
+  //==============================================================================
+  // Native JUCE UI
+  //==============================================================================
+  juce::Label headlineLabel, roomSizeLabel, dampingLabel, wetLevelLabel, dryLevelLabel;
+  juce::Slider roomSizeSlider, dampingSlider, wetLevelSlider, dryLevelSlider;
+  std::unique_ptr<juce::AudioProcessorValueTreeState::SliderAttachment> roomSizeAttachment,
+      dampingAttachment, wetLevelAttachment, dryLevelAttachment;
 
   //==============================================================================
 

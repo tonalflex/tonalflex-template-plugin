@@ -1,0 +1,14 @@
+{
+	"extends": "./tsconfig.app.json",
+	"compilerOptions": {
+		"declaration": true,
+		"emitDeclarationOnly": true,
+		"declarationDir": "dist",
+		"noEmit": false,
+		"outDir": "dist",
+		"composite": false,
+	},
+	"include": ["src"],
+	"exclude": ["src/main.ts", "src/backend/JuceBackend.ts", "src/App.vue"]
+}
+  

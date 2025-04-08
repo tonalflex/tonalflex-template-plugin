@@ -1,6 +1,6 @@
 <template>
   <div class="plugin-container">
-    <img src="@/assets/logo.png" alt="Logo" class="logo" />
+    <img :src="logo" alt="Logo" class="logo" />
     <SliderControl label="Room Size" v-model="roomSize" />
     <SliderControl label="Damping" v-model="damping" />
     <SliderControl label="Wet Level" v-model="wetLevel" />
@@ -18,6 +18,7 @@
 import SliderControl from "@components/controls/SliderControl.vue";
 import { useParameter } from "@composables/useParameter";
 import { useFunction } from "@composables/useFunction";
+import logo from "@/assets/logo.png?inline";
 
 // Plugin Parameters
 const roomSize = useParameter("roomSize", "slider");

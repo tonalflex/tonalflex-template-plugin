@@ -1,0 +1,6 @@
+{
+    "name" : "Template",
+    "path" : "template.vst3",
+    "system-plugin": "false",
+    "description": "TonalFlex Template Plugin provides a starting point for creating Audio DSP Plugins using JUCE framework."
+}

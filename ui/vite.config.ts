@@ -7,10 +7,16 @@ import cssInjectedByJsPlugin from 'vite-plugin-css-injected-by-js'
 const isLib = process.env.BUILD_TARGET === 'lib'
 
 export default defineConfig({
-  plugins: [vue(), tsconfigPaths(), cssInjectedByJsPlugin()],
+  plugins: [
+    vue(),
+    tsconfigPaths(),
+    cssInjectedByJsPlugin(),
+  ],
   build: isLib
     // Build NPM library
     ? {
+        outDir: 'dist',
+        emptyOutDir: true,
         lib: {
           entry: new URL('./src/index.ts', import.meta.url).pathname,
           name: 'PluginUI',
@@ -28,7 +34,7 @@ export default defineConfig({
       }
     // Build JUCE Webview static UI
     : {
-        outDir: '../plugin/web',
+        outDir: '../plugin/webview',
         emptyOutDir: true,
         assetsDir: 'assets',
         rollupOptions: {

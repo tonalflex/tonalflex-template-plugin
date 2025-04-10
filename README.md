@@ -56,12 +56,12 @@ Build the plugin for ElkOS using the prebuilt docker image specified in `docker-
 docker-compose up
 ```
 
-Once the compilation completes, a zipped VST3 plugin for ElkOS is accessible in the workspace `output` directory.
+Once the compilation completes, a compressed headless VST3 plugin for ElkOS running on ARM64 is accessible in the workspace `bin` directory.
 
 _Note! You may need to add exectuable permission to the build script first time._
 
 ```
-chmod +x ./script/build-elk-plugin.sh
+chmod +x ./script/build-arm64-headless.sh
 ```
 
 ---

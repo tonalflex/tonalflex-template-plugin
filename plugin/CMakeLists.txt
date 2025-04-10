@@ -66,17 +66,25 @@ target_link_libraries(${PROJECT_NAME}
         # juce::juce_recommended_lto_flags # Must be disabled for ElkOS build
 )
 
-# Add Webview files as binary data
-file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*.*")
+if (BUILD_DESKTOP)
+    # Add Webview GUI files as binary data
+    file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*.*")
 
-juce_add_binary_data(WebAssets
-  SOURCES ${WEB_ASSETS}
-)
+    juce_add_binary_data(WebAssets
+    SOURCES ${WEB_ASSETS}
+    )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
-target_include_directories(${PROJECT_NAME}
-    PRIVATE ${WebAssets_BINARY_DIR}
-)
+    target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE ${WebAssets_BINARY_DIR}
+    )
+else()
+    # Generate a dummy BinaryData.h to avoid missing include errors
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/BinaryData.h" "// Empty stub for Embedded builds\n")
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endif()
 
 # These definitions are recommended by JUCE.
 target_compile_definitions(${PROJECT_NAME}

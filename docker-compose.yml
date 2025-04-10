@@ -1,11 +1,11 @@
 services:
-  elk-plugin-builder:
+  arm64-headless-builder:
     image: ghcr.io/tonalflex/elk-audio-os-builder:latest
-    container_name: elk-plugin-builder
-    platform: linux/amd64 # Apple Silicon
+    container_name: arm64-headless-builder
+    platform: linux/amd64 # Required for Apple Silicon
     volumes:
       - ./plugin:/home/yoctouser/plugin
       - ./script:/home/yoctouser/script
-      - ./output:/home/yoctouser/output
+      - ./bin:/home/yoctouser/bin
     working_dir: /home/yoctouser/script
-    command: "./build-elk-plugin.sh"
+    command: "./build-arm64-headless.sh"

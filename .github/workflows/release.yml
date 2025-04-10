@@ -1,4 +1,4 @@
-name: Build and Release ElkOS VST3 Plugin
+name: Build and Release headless VST3 Plugin
 
 on:
   push:
@@ -26,15 +26,15 @@ jobs:
           docker run --rm \
             -v ${{ github.workspace }}/plugin:/home/yoctouser/plugin \
             -v ${{ github.workspace }}/script:/home/yoctouser/script \
-            -v ${{ github.workspace }}/output:/home/yoctouser/output \
+            -v ${{ github.workspace }}/bin:/home/yoctouser/bin \
             --user root \
             ghcr.io/tonalflex/elk-audio-os-builder:latest \
-            /home/yoctouser/script/build-elk-plugin.sh
+            /home/yoctouser/script/build-arm64-headless.sh
 
-      - name: Check if ZIP File Exists
+      - name: Check if plugin file exists
         run: |
-          if [ ! -f output/elk-vst3-plugin.zip ]; then
-            echo "❌ ERROR: Plugin ZIP file not found!" >&2
+          if [ ! -f bin/plugin-arm64-headless.tar.gz ]; then
+            echo "❌ ERROR: Plugin file not found!" >&2
             exit 1
           fi
 
@@ -46,16 +46,10 @@ jobs:
           tag_name: ${{ github.ref_name }}
           draft: false
           prerelease: false
-          body: |
-            🎛️ New ElkOS VST3 Plugin Release!
 
-            - **Built using GitHub Actions**
-            - **Includes sushi-config.json**
-            - **Compatible with ElkOS**
-
-      - name: Upload ZIP to Release
+      - name: Upload Release
         uses: softprops/action-gh-release@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           tag_name: ${{ github.ref_name }}
-          files: output/elk-vst3-plugin.zip
+          files: bin/plugin-arm64-headless.tar.gz

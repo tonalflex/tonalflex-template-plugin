@@ -5,21 +5,23 @@ set(PLUGIN_NAME "Tonalflex Plugin")   # Name of the plugin (used in the UI)
 set(PLUGIN_CODE TFTP)                # Unique 4-letter code for the plugin
 project(plugin VERSION 0.0.1)        # Set version of the plugin
 
-option(BUILD_DESKTOP "Also build Standalone" OFF)
+option(HEADLESS "Disable GUI (headless/embedded build)" ON)
 set(_plugin_formats "VST3") # Default plugin format
 
 # Build for Desktop or Embedded (ElkOS)
-if (BUILD_DESKTOP)
+if (NOT HEADLESS)
     set(JUCE_WEB_BROWSER_VALUE 1)               # Webview UI for Desktop
     list(APPEND _plugin_formats "Standalone")   # Add Standalone format
     # list(APPEND _plugin_formats "AU")           # Add AU (Apple) format
     # list(APPEND _plugin_formats "AAX")          # Add AAX (Avid) format
     set(VST3_MANIFEST TRUE)                     # Create moduleinfo.json for VST3
+    add_compile_definitions(HEADLESS=0)
 else()
     set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
     find_package(JUCE CONFIG REQUIRED)           # Use ElkOS SDK provided JUCE
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF) # Disable LTO
     set(VST3_MANIFEST FALSE)                    # Required for ElkOS cross-compilation
+    add_compile_definitions(HEADLESS=1)
 endif()
 
 juce_add_plugin(${PROJECT_NAME}
@@ -37,12 +39,17 @@ juce_add_plugin(${PROJECT_NAME}
 
 target_sources(${PROJECT_NAME}
     PRIVATE
-        include/plugin_editor.h
         include/plugin_processor.h
-        src/plugin_editor.cpp
         src/plugin_processor.cpp
-        
 )
+# Include GUI for Desktop builds
+if (NOT HEADLESS)
+    target_sources(${PROJECT_NAME}
+        PRIVATE
+            include/plugin_editor.h
+            src/plugin_editor.cpp
+    )
+endif()
 
 target_include_directories(${PROJECT_NAME}
     PUBLIC
@@ -66,17 +73,25 @@ target_link_libraries(${PROJECT_NAME}
         # juce::juce_recommended_lto_flags # Must be disabled for ElkOS build
 )
 
-# Add Webview files as binary data
-file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*.*")
+if (NOT HEADLESS)
+    # Add Webview GUI files as binary data
+    file(GLOB_RECURSE WEB_ASSETS "${CMAKE_CURRENT_SOURCE_DIR}/webview/*.*")
 
-juce_add_binary_data(WebAssets
-  SOURCES ${WEB_ASSETS}
-)
+    juce_add_binary_data(WebAssets
+    SOURCES ${WEB_ASSETS}
+    )
 
-target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
-target_include_directories(${PROJECT_NAME}
-    PRIVATE ${WebAssets_BINARY_DIR}
-)
+    target_link_libraries(${PROJECT_NAME} PRIVATE WebAssets)
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE ${WebAssets_BINARY_DIR}
+    )
+else()
+    # Generate a dummy BinaryData.h to avoid missing include errors
+    file(WRITE "${CMAKE_CURRENT_BINARY_DIR}/BinaryData.h" "// Empty stub for Embedded builds\n")
+    target_include_directories(${PROJECT_NAME}
+        PRIVATE ${CMAKE_CURRENT_BINARY_DIR}
+    )
+endif()
 
 # These definitions are recommended by JUCE.
 target_compile_definitions(${PROJECT_NAME}

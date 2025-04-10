@@ -1,6 +1,8 @@
 #include "plugin_processor.h"
 
+#if !HEADLESS_BUILD
 #include "plugin_editor.h"
+#endif
 
 // Small tolerance for floating-point comparisons
 constexpr float epsilon = 1e-5f;
@@ -145,7 +147,11 @@ bool AudioPluginAudioProcessor::hasEditor() const {
 }
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor() {
+#if !HEADLESS_BUILD
   return new AudioPluginAudioProcessorEditor(*this);
+#else
+  return nullptr;
+#endif
 }
 
 void AudioPluginAudioProcessor::getStateInformation(juce::MemoryBlock& destData) {

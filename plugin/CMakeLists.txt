@@ -15,11 +15,13 @@ if (BUILD_DESKTOP)
     # list(APPEND _plugin_formats "AU")           # Add AU (Apple) format
     # list(APPEND _plugin_formats "AAX")          # Add AAX (Avid) format
     set(VST3_MANIFEST TRUE)                     # Create moduleinfo.json for VST3
+    add_compile_definitions(HEADLESS_BUILD=0)    # Include plugin_editor.h
 else()
     set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
     find_package(JUCE CONFIG REQUIRED)           # Use ElkOS SDK provided JUCE
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF) # Disable LTO
     set(VST3_MANIFEST FALSE)                    # Required for ElkOS cross-compilation
+    add_compile_definitions(HEADLESS_BUILD=1)    # Do not include plugin_editor.h
 endif()
 
 juce_add_plugin(${PROJECT_NAME}

@@ -1,6 +1,6 @@
 #include "plugin_processor.h"
 
-#if !HEADLESS_BUILD
+#if !HEADLESS
 #include "plugin_editor.h"
 #endif
 
@@ -147,7 +147,7 @@ bool AudioPluginAudioProcessor::hasEditor() const {
 }
 
 juce::AudioProcessorEditor* AudioPluginAudioProcessor::createEditor() {
-#if !HEADLESS_BUILD
+#if !HEADLESS
   return new AudioPluginAudioProcessorEditor(*this);
 #else
   return nullptr;

@@ -91,10 +91,10 @@ If you want to build the plugin for desktop, use:
 
 ```sh
 # Option 1 - Debug Mode
-cmake -B build -S . -DBUILD_DESKTOP=ON -DCMAKE_BUILD_TYPE=Debug
+cmake -B build -S . -DHEADLESS=OFF -DCMAKE_BUILD_TYPE=Debug
 
 # Option 2 - Release Mode
-cmake -B build -S . -DBUILD_DESKTOP=ON -DCMAKE_BUILD_TYPE=Release
+cmake -B build -S . -DHEADLESS=OFF -DCMAKE_BUILD_TYPE=Release
 
 # Note! For linux, you also need to specify the toolchain
 -DCMAKE_TOOLCHAIN_FILE=cmake/linux-toolchain.cmake \

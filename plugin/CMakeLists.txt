@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.22.1)
 
 # Required by JUCE (Change these to project specs)
-set(PLUGIN_NAME "Tonalflex Plugin")   # Name of the plugin (used in the UI)
+set(PLUGIN_NAME "Plugin")            # Name of the plugin (used in the UI)
 set(PLUGIN_CODE TFTP)                # Unique 4-letter code for the plugin
 project(plugin VERSION 0.0.1)        # Set version of the plugin
 

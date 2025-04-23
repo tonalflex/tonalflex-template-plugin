@@ -45,6 +45,11 @@ When opening this template for the first time:
 1. **Select a CMake Preset** in your IDE.
 2. The available presets are defined in [`CMakePresets.json`](./CMakePresets.json).
 3. This ensures a **consistent build setup** across different environments.
+4. Set your plugin name and information in the following files:
+   - `plugin/CMakeLists.txt`
+   - `plugin/src/plugin_processor.cpp`
+   - `ui/package.json`
+   - `ui/public/metadata.json`
 
 ---
 

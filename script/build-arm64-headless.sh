@@ -18,8 +18,15 @@ fi
 cmake -DCMAKE_BUILD_TYPE=Release ..
 make -j$(nproc)
 
+# Find the _artefacts directory
+artefacts_dir=$(find . -type d -name '*_artefacts' -print -quit)
+if [ -z "$artefacts_dir" ]; then
+  echo "No '*_artefacts' directory found in CMake build!" >&2
+  exit 1
+fi
+
 # Zip the VST3 plugin to the bin directory
-PLUGIN_PATH="./plugin_artefacts/Release/VST3"
+PLUGIN_PATH="$artefacts_dir/Release/VST3"
 CONFIG_FILE="/home/yoctouser/plugin/sushi-config.json"
 TAR_FILE="/home/yoctouser/bin/plugin-arm64-headless.tar.gz"
 

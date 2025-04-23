@@ -27,20 +27,18 @@ fi
 
 # Zip the VST3 plugin to the bin directory
 PLUGIN_PATH="$artefacts_dir/Release/VST3"
-CONFIG_FILE="/home/yoctouser/plugin/sushi-config.json"
 TAR_FILE="/home/yoctouser/bin/plugin-arm64-headless.tar.gz"
 
 mkdir -p /home/yoctouser/bin
 chmod 777 /home/yoctouser/bin
 
 [[ -d "$PLUGIN_PATH" ]] || { echo "❌ Error: VST3 plugin not found at $PLUGIN_PATH"; exit 1; }
-[[ -f "$CONFIG_FILE" ]] || { echo "❌ Error: Sushi-config.json not found at $CONFIG_FILE"; exit 1; }
 [[ -f "$TAR_FILE" ]] && rm -f "$TAR_FILE"
 
-echo "📦 Creating tar.gz of VST3 plugin and configuration file..."
-cp "$CONFIG_FILE" "$PLUGIN_PATH/"
+echo "📦 Creating tar.gz of VST3 plugin..."
 tar -czf "$TAR_FILE" -C "$PLUGIN_PATH" .
-echo "✅ Plugin & Sushi JSON config packaged: $TAR_FILE"
+
+echo "✅ Plugin successfully compiled and packaged at: $TAR_FILE"
 
 # Remove the temporary build directory
 rm -rf /home/yoctouser/plugin/build

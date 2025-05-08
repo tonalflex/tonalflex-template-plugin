@@ -19,10 +19,10 @@ AudioPluginAudioProcessor::AudioPluginAudioProcessor()
                          ),
       parameters(*this, nullptr, "PARAMETERS", [] {
         return juce::AudioProcessorValueTreeState::ParameterLayout{
-            std::make_unique<juce::AudioParameterFloat>("roomSize", "Room Size", 0.0f, 1.0f, 0.5f),
-            std::make_unique<juce::AudioParameterFloat>("damping", "Damping", 0.0f, 1.0f, 0.3f),
-            std::make_unique<juce::AudioParameterFloat>("wetLevel", "Wet Level", 0.0f, 1.0f, 0.5f),
-            std::make_unique<juce::AudioParameterFloat>("dryLevel", "Dry Level", 0.0f, 1.0f, 0.8f)};
+            std::make_unique<juce::AudioParameterFloat>("roomSize", "roomSize", 0.0f, 1.0f, 0.5f),
+            std::make_unique<juce::AudioParameterFloat>("damping", "damping", 0.0f, 1.0f, 0.3f),
+            std::make_unique<juce::AudioParameterFloat>("wetLevel", "wetLevel", 0.0f, 1.0f, 0.5f),
+            std::make_unique<juce::AudioParameterFloat>("dryLevel", "dryLevel", 0.0f, 1.0f, 0.8f)};
       }()) {
 }
 

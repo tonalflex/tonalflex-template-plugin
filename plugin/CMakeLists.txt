@@ -11,6 +11,7 @@ set(_plugin_formats "VST3") # Default plugin format
 # Build for Desktop or Embedded (ElkOS)
 if (NOT HEADLESS)
     set(JUCE_WEB_BROWSER_VALUE 1)               # Webview UI for Desktop
+    set(NEEDS_WEB_BROWSER_VALUE TRUE)           # enable, need browser for webview on linux
     list(APPEND _plugin_formats "Standalone")   # Add Standalone format
     # list(APPEND _plugin_formats "AU")           # Add AU (Apple) format
     # list(APPEND _plugin_formats "AAX")          # Add AAX (Avid) format
@@ -18,6 +19,7 @@ if (NOT HEADLESS)
     add_compile_definitions(HEADLESS=0)
 else()
     set(JUCE_WEB_BROWSER_VALUE 0)               # No Webview UI for Embedded
+    set(NEEDS_WEB_BROWSER_VALUE FALSE)          # disable, need browser for webview on linux
     find_package(JUCE CONFIG REQUIRED)           # Use ElkOS SDK provided JUCE
     set(CMAKE_INTERPROCEDURAL_OPTIMIZATION OFF) # Disable LTO
     set(VST3_MANIFEST FALSE)                    # Required for ElkOS cross-compilation
@@ -34,6 +36,7 @@ juce_add_plugin(${PROJECT_NAME}
     PLUGIN_CODE ${PLUGIN_CODE}
     FORMATS ${_plugin_formats}
     PRODUCT_NAME ${PROJECT_NAME}
+    NEEDS_WEB_BROWSER ${NEEDS_WEB_BROWSER_VALUE}
     VST3_AUTO_MANIFEST ${VST3_MANIFEST}
 )
 

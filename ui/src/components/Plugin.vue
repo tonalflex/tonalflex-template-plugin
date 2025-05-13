@@ -43,7 +43,7 @@ const handleClick = () => {
 <!-- Use style.css to change global styles such as font, colors, etc. -->
 <style scoped>
 .logo {
-  width: 60vw;
+  width: 60%;
   max-width: 400px;
   height: auto;
 }
@@ -53,6 +53,7 @@ const handleClick = () => {
   gap: 1.5rem;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100%;
+  width: 100%;
 }
 </style>
